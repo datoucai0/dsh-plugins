@@ -1,4 +1,5 @@
-// build-local-kit.mjs - assemble the merged DSH plugin from the four local plugins.
+// scripts/build.mjs - assemble the merged DSH plugin from the four local plugins
+// (source packages under packages/, merged output into packages/dsh-local-kit/).
 // Strategy (matches the DSH client contract: registration id MUST equal the package name):
 //   host   -> one ESM module that imports and applies the four host halves
 //   client -> ONE __ModuleLoader__.load({id:'dsh-local-kit'}) whose factory materializes
@@ -7,8 +8,8 @@
 import { readFileSync, writeFileSync, mkdirSync, cpSync, existsSync, rmSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 
-const SRC = "C:/Users/Administrator/dsh-plugins";
-const OUT = "C:/Users/Administrator/dsh-plugins/dsh-local-kit";
+const SRC = "C:/Users/Administrator/dsh-plugins/packages";
+const OUT = "C:/Users/Administrator/dsh-plugins/packages/dsh-local-kit";
 const PKG = "dsh-local-kit";
 
 const features = [
@@ -196,7 +197,7 @@ writeFileSync(join(OUT, "package.json"), JSON.stringify(mergedPkg, null, 2) + "\
 // Ship the hand-written README. The template lives OUTSIDE OUT because the reset at
 // the top of this script deletes OUT, so keeping the template beside the script keeps
 // the docs intact across rebuilds.
-const readmeTemplate = join(OUT, "..", "dsh-local-kit.README.md");
+const readmeTemplate = join(OUT, "..", "..", "templates", "dsh-local-kit.README.md");
 if (existsSync(readmeTemplate)) cpSync(readmeTemplate, join(OUT, "README.md"));
 else console.log("WARNING: README template missing: " + readmeTemplate);
 writeFileSync(
