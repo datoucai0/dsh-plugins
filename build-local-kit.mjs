@@ -7,15 +7,15 @@
 import { readFileSync, writeFileSync, mkdirSync, cpSync, existsSync, rmSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 
-const SRC = "C:/Users/Administrator/Documents/实际问题处理";
+const SRC = "C:/Users/Administrator/dsh-plugins";
 const OUT = "C:/Users/Administrator/dsh-plugins/dsh-local-kit";
 const PKG = "dsh-local-kit";
 
 const features = [
-  { key: "dsmon", dir: `${SRC}/DSH插件开发/dsmon` },
-  { key: "message-preview", dir: `${SRC}/plugins-local/dsh-message-preview` },
-  { key: "drag-and-drop", dir: `${SRC}/plugins-local/dsh-drag-and-drop` },
-  { key: "file-mentions", dir: `${SRC}/plugins-local/dsh-file-mentions` },
+  { key: "dsmon", dir: `${SRC}/dsmon` },
+  { key: "message-preview", dir: `${SRC}/dsh-message-preview` },
+  { key: "drag-and-drop", dir: `${SRC}/dsh-drag-and-drop` },
+  { key: "file-mentions", dir: `${SRC}/dsh-file-mentions` },
 ];
 
 function extractClientBody(src, key) {
@@ -178,11 +178,11 @@ const mergedPkg = {
   name: PKG,
   version: "1.0.0",
   description:
-    "Merged local DSH bundle: dsmon (peak/off-peak + cost ledger + monitor), message preview, drag-and-drop, file mentions.",
+    "本地插件四合一：DeepSeek 峰谷时段与费用监控（含服务器监控页）、侧边栏消息预览、拖拽文件插入原始路径、回复中文件路径可点击。",
   type: "module",
   main: "./lib/index.js",
   exports: { ".": "./lib/index.js", "./client": "./lib/client.js", "./package.json": "./package.json" },
-  files: ["lib", "cordis.patch.yml"],
+  files: ["lib", "cordis.patch.yml", "README.md"],
   dsh: {
     bundle: { patch: "./cordis.patch.yml" },
     client: { platform: "web", inject: [...injectUnion] },
@@ -192,6 +192,13 @@ const mergedPkg = {
   license: "MIT",
 };
 writeFileSync(join(OUT, "package.json"), JSON.stringify(mergedPkg, null, 2) + "\n", "utf8");
+
+// Ship the hand-written README. The template lives OUTSIDE OUT because the reset at
+// the top of this script deletes OUT, so keeping the template beside the script keeps
+// the docs intact across rebuilds.
+const readmeTemplate = join(OUT, "..", "dsh-local-kit.README.md");
+if (existsSync(readmeTemplate)) cpSync(readmeTemplate, join(OUT, "README.md"));
+else console.log("WARNING: README template missing: " + readmeTemplate);
 writeFileSync(
   join(OUT, "cordis.patch.yml"),
   `# ${PKG} bundle patch: one merged row replacing dsmon + message-preview +\n# drag-and-drop + file-mentions (ids the four features used are preserved\n# inside the merged host/client halves).\n- insert:\n    - id: local-kit\n      name: '${PKG}'\n`,
