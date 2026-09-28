@@ -1,0 +1,4 @@
+# dsh-message-preview bundle patch: load the host half and expose its client half.
+- insert:
+    - id: message-preview
+      name: dsh-message-preview

@@ -1,0 +1,6 @@
+# dsh-local-kit bundle patch: one merged row replacing dsmon + message-preview +
+# drag-and-drop + file-mentions (ids the four features used are preserved
+# inside the merged host/client halves).
+- insert:
+    - id: local-kit
+      name: 'dsh-local-kit'

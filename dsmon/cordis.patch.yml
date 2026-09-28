@@ -1,0 +1,7 @@
+# dsmon: DeepSeek peak/off-peak reminder + host-computed cost ledger (composer
+# strip) and the server-monitor HTTP API plus /dsmon/api/cost (host). One loader
+# row; the host half runs lib/index.js and the browser half materializes the
+# lib/client.js bundle.
+- insert:
+    - id: dsmon
+      name: dsmon

@@ -1,0 +1,123 @@
+# dsh-file-mentions 📎
+
+[English](README.md) | [简体中文](README.zh-CN.md)
+
+![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
+
+[![Awesome DSH Plugin](https://awesome-dsh-plugin.com/badge.svg)](https://awesome-dsh-plugin.com)
+
+**回复里提到的文件/路径，点一下就打开** —— DeepSeek Harness（DSH）web 插件，Codex 式体验。
+
+*非官方项目：社区成员独立开发维护，非 DeepSeek 官方产品。*
+
+## 截图
+
+![dsh-file-mentions 效果](assets/screenshot.png)
+
+回复正文里反引号包着的路径（`~/...`、绝对路径、相对路径、中文路径）**直接点击就能打开**；
+每个可点路径后面自动带一个文件夹图标小按钮，进文件管理器定位；回复尾部还有"📎 提到的文件"
+小圆钮兜底。URL 链接由官方渲染器自动可点，无需本插件处理。
+
+![外置盘白名单设置](assets/screenshot-settings.png)
+
+外置盘白名单（设置 → 插件 → 文件提及）：**本机目录（家目录内，如 `~/Downloads`、`~/Desktop`）
+默认可显示并点击打开，无需配置**；此处只登记外置盘/网络盘根目录（如 `/Volumes/盘名`），
+每行一个，登记后该盘内文件即可显示并点击打开。系统盘特征目录（`/System`、`/etc`）会被自动拒绝。
+
+## 功能
+
+| 位置 | 操作 | 效果 |
+|---|---|---|
+| 正文路径文字 | 点击 | 文件用系统默认应用打开 / 目录打开窗口 |
+| 正文路径后的文件夹图标 | 点击 | 文件管理器定位选中 |
+| 回复尾部"📎 提到的文件" | 点文件名 | DSH 内预览文件内容 |
+| 回复尾部文件夹图标 | 点击 | 文件管理器定位选中 |
+| 正文 URL | 点击 | 浏览器打开（官方 autolink） |
+
+支持 `~/` 展开、相对路径（按会话目录解析）、macOS/Linux/Windows 三种绝对路径形态；
+不存在的路径点击后静默无反应（不报错、不弹窗）。
+
+## 安装
+
+本仓库是官方 **bundle 插件**格式（根 `package.json` 的 `dsh.bundle` + `dsh.client`），
+经官方 profile 管理一行安装：
+
+```sh
+dsh plugin --profile web add "github:a903067276-rgb/dsh-file-mentions#main"
+```
+
+装完**重启 `dsh web`**（bundle 层在启动时合成，热更新无效）。需要 pnpm
+（`dsh plugin` 是 pnpm 转发器）。
+
+手动挂载兜底：见 [docs/install.md](docs/install.md)。
+
+## 用法
+
+agent 回复里用反引号包路径（如 `` `~/docs/计划.md` ``）即可触发正文点击。
+尾部列表自动出现，无需配置。
+
+### 会话目录之外的路径（外置盘等）
+
+**本机目录无需配置**：家目录（`~/Downloads`、`~/Desktop` 等）内的路径默认可显示、
+可点击打开。**外置盘/网络盘**（如 `/Volumes/U盘名`）需要登记根目录：
+**外置盘白名单**：设置 → 插件 → 文件提及（每行一个目录）。保存立即生效，无需重启。
+
+系统盘保护：白名单根下若检测到系统特征目录（`/System`、`/etc`，Windows 为
+`\Windows`），该根会被自动拒绝——误把整块系统盘加进白名单也开不了门。
+
+## 平台支持
+
+| 平台 | 状态 |
+|---|---|
+| macOS | ✅ 全功能实测（含中文路径） |
+| Linux | ⚠️ 未实测；架构上预期可用（命令分流与路径解析已实现） |
+| Windows | ⚠️ 未实测；架构上预期可用（命令分流与路径解析已实现） |
+
+## 环境要求
+
+- DSH web（≥ 0.1.0-rc.6）（`npx @deepseek-ai/dsh web` 启动）
+- **版本兼容**（尽力兼容——设置卡片用双字段 `key`+`id` 注册，同满足 rc.6（id 契约）与 rc.7+（key 契约）；已在本地实测 rc.6/rc.8/0.1.1-rc.2/0.1.2-alpha.2/0.1.5-rc.1（路径可点击 + "提到的文件"面板），**不保证每个 DSH 版本**）：
+  - DSH 0.1.0-rc.6 及以上（含 0.1.1-rc.1/rc.2 与 0.1.2）：装 `main`（默认）。
+  - **DSH 0.1.5-rc.1：加载实测通过**（插件已进客户端 bundle、`/api/file-mentions/check` 存活）；UI 交互未逐项肉眼复测。⚠️ 0.1.5 起官方自带**窄口径**的「收尾回复内联代码路径可点」（仅限本回合 `write`/`edit`/`present` 过的文件，见官方 `dsh-client-ui-deliverables`），与本插件部分重叠；**纯文本/裸路径、跨回合与历史消息**仍只有本插件处理。
+  - 保守回退（升级前的最后版本）：DSH 0.1.0-rc.7/rc.8 → `v1.0.8`（`dsh plugin add github:a903067276-rgb/dsh-file-mentions#v1.0.8`）；DSH 0.1.0-rc.6 → 冻结 `rc6-compat`（不再维护）。
+- 纯 Node 标准库实现；peer 依赖（`@deepseek-ai/dsh-settings`、`@deepseek-ai/schemastery`）
+  由宿主提供
+- 打开文件调用系统默认应用 / 文件管理器（按平台分流命令）
+- **维护策略**：本插件将持续跟随 DSH 最新版本演进；对旧版 DSH 的兼容仅是尽力而为、不保证长期有效。
+
+## 工作原理
+
+- **Host**（`lib/index.js`）：三条路由 —— `/api/file-mentions/check`（存在性验证）、
+  `/api/file-mentions/open`（系统打开，`mode: open/reveal`，平台命令分流）、
+  `/api/file-mentions/config`（白名单读写，设置页用）。三条路由均有同源校验防 CSRF。
+  探测面：绝对/`~/` 路径只在本会话 cwd 内或用户声明的白名单根内探测（白名单走官方
+  settings 服务，保存即生效、无需重启）；白名单根带系统盘保护与 symlink 防逃逸。
+  全部 Node 标准库，`execFile` 不经 shell 防注入。
+- **Client**（`lib/client.js`）：conversationEvents 收集器提取每轮回复里的路径 →
+  发布到回合数据 → 尾部列表渲染前先过滤不存在的路径；正文可点用 **document 点击委托**
+  （官方渲染入口被官方"产物"插件占用，无法扩展，这是唯一可行路径）；正文文件夹图标按钮用
+  MutationObserver 动态补插，React 重渲染自动恢复；设置卡片（侧边栏分区 + 插件页）
+  编辑白名单。扫描/装饰为**增量式**：observer 回调只处理官方消息滚动区
+  （`[data-conversation-scroll]`）内**新增**的节点，每条新文本先做廉价快筛（不含
+  / ~ \ 直接跳过，零正则零请求），存在性预检只查当前会话——没提到路径的对话
+  完全不扫描；侧栏/hover 卡/菜单/设置页一概不碰（v1.0.13）。
+
+详见 [docs/architecture.md](docs/architecture.md)。
+
+## 注意事项
+
+- bundle 安装与手动挂载**二选一**，不要同时用。
+- 手动挂载时 `~/.dsh/cordis.patch.yml` 只加**单 entry**；双 entry 会让插件应用两次、
+  路由重复注册崩溃。
+
+## 兼容性说明
+
+- 正文可点依赖"反引号包裹的路径"（与 Codex 一致的 agent 输出惯例）；**消息正文里的裸路径
+  同样可点**（CSS Highlight 装饰，零 DOM 变更；仅消息区——侧栏/hover 卡/菜单/设置页
+  一概不碰，v1.0.13）。
+- 官方"产物"列表与本插件互不打架：官方有产出时优先，无产出时本插件显示。
+- Windows / Linux 欢迎实测后提交 issue/PR 补充验证。
+
+## 许可证
+
+[MIT](LICENSE)

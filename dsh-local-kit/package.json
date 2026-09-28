@@ -1,0 +1,40 @@
+{
+  "name": "dsh-local-kit",
+  "version": "1.0.0",
+  "description": "Merged local DSH bundle: dsmon (peak/off-peak + cost ledger + monitor), message preview, drag-and-drop, file mentions.",
+  "type": "module",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-chat",
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-client-ui-slots",
+        "@deepseek-ai/dsh-api-remotes"
+      ]
+    }
+  },
+  "dependencies": {
+    "@deepseek-ai/schemastery": "3.18.4",
+    "zod": "3.25.76"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}

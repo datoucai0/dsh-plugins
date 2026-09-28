@@ -1,0 +1,35 @@
+{
+  "name": "dsmon",
+  "version": "0.2.2",
+  "description": "DeepSeek 峰谷时段与费用监控：峰谷价窗提醒、按官方价格分档计算的每请求人民币成本台账（含节假日日历，可导出 JSON/CSV），以及服务器监控页（系统概览、性能、进程线程、资源明细）。",
+  "type": "module",
+  "main": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/client.js",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-chat"
+      ]
+    }
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT"
+}
