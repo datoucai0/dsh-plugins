@@ -26,6 +26,26 @@ dsh-plugins/                        ← 工程根（git 仓库）
     └── 新增功能指南.md              ← 以后加新功能的操作步骤
 ```
 
+## 从 GitHub 安装（公开版）
+
+```powershell
+# 1) 克隆
+git clone https://github.com/datoucai0/dsh-plugins.git $HOME\dsh-plugins
+cd $HOME\dsh-plugins
+
+# 2) 构建四合一包
+node scripts/build.mjs
+
+# 3) 装进 DSH（把 <你的用户目录> 换成实际路径）
+dsh plugin --profile web add "file:<你的用户目录>/dsh-plugins/packages/dsh-local-kit"
+```
+
+也可以只装单个插件（`packages/` 下任选）：
+
+```powershell
+dsh plugin --profile web add "file:<你的用户目录>/dsh-plugins/packages/dsmon"
+```
+
 ## 快速开始
 
 ```powershell
@@ -67,3 +87,17 @@ dsh plugin --profile web add "file:C:/Users/Administrator/dsh-plugins/packages/d
 | `dsh-message-preview` | 外部来源（上游 `github.com/asukasec/dsh-message-preview`）本地化 |
 | `dsh-drag-and-drop` | 外部来源（上游 `github.com/omdsh-dev/dsh-drag-and-drop`）本地化 |
 | `dsh-file-mentions` | 外部来源（上游 `github.com/a903067276-rgb/dsh-file-mentions`）本地化 |
+
+三个外部来源均为宽松许可（MIT / BSD-3-Clause），本地化版本保留原 LICENSE 文件，再分发需保留署名。`dsmon` 为本机自研。
+
+## 许可证
+
+本工程整体以 MIT 发布（见根目录 `LICENSE`）。各包以自身 `LICENSE` 为准：
+
+| 包 | 许可证 |
+| --- | --- |
+| `dsmon` | MIT |
+| `dsh-message-preview` | MIT |
+| `dsh-drag-and-drop` | BSD-3-Clause |
+| `dsh-file-mentions` | MIT |
+| `dsh-local-kit` | MIT（由上述四个包合并生成） |
