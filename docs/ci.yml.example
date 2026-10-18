@@ -1,0 +1,58 @@
+# CI 模板（可选启用）
+#
+# GitHub 规则：任何提交把文件放进 `.github/workflows/` 时，推送所用令牌必须带
+# `workflow` 权限（classic token）或 `Workflows: Read and write`（fine-grained token）。
+# 因此本文件先放在 docs/ 下，权限到位后再复制到 `.github/workflows/ci.yml`：
+#
+#   mkdir -p .github/workflows
+#   cp docs/ci.yml.example .github/workflows/ci.yml
+#   git add .github/workflows/ci.yml && git commit -m "ci: enable structural checks" && git push
+#
+# 启用后 README 顶部可加徽章：
+#   [![ci](https://github.com/datoucai0/dsh-plugins/actions/workflows/ci.yml/badge.svg)](https://github.com/datoucai0/dsh-plugins/actions/workflows/ci.yml)
+
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  structural:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Syntax check scripts
+        run: |
+          node --check scripts/build.mjs
+          node --check scripts/verify.mjs
+
+      - name: Validate package manifests
+        run: |
+          for d in packages/*/; do
+            node -e "const j=JSON.parse(require('fs').readFileSync(process.argv[1],'utf8')); if(!j.name||!j.version) throw new Error('missing name/version'); console.log(j.name, j.version)" "$d/package.json"
+          done
+
+      - name: Required bundle files
+        run: |
+          test -f packages/dsh-local-kit/lib/index.js
+          test -f packages/dsh-local-kit/lib/client.js
+          test -f packages/dsh-local-kit/cordis.patch.yml
+          test -f packages/dsh-local-kit/README.md
+          echo "bundle files present"
+
+      - name: Every package ships a license
+        run: |
+          for d in packages/*/; do
+            test -f "$d/LICENSE" || { echo "missing LICENSE in $d"; exit 1; }
+          done
+          echo "licenses present"
