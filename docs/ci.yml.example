@@ -1,15 +1,10 @@
-# CI 模板（可选启用）
+# CI 模板（本仓库已启用）
+#
+# 本仓库的 CI 位于 `.github/workflows/ci.yml`（内容与本文件一致）。
+# 本文件保留作为其它仓库的模板。
 #
 # GitHub 规则：任何提交把文件放进 `.github/workflows/` 时，推送所用令牌必须带
 # `workflow` 权限（classic token）或 `Workflows: Read and write`（fine-grained token）。
-# 因此本文件先放在 docs/ 下，权限到位后再复制到 `.github/workflows/ci.yml`：
-#
-#   mkdir -p .github/workflows
-#   cp docs/ci.yml.example .github/workflows/ci.yml
-#   git add .github/workflows/ci.yml && git commit -m "ci: enable structural checks" && git push
-#
-# 启用后 README 顶部可加徽章：
-#   [![ci](https://github.com/datoucai0/dsh-plugins/actions/workflows/ci.yml/badge.svg)](https://github.com/datoucai0/dsh-plugins/actions/workflows/ci.yml)
 
 name: ci
 
