@@ -1,5 +1,7 @@
 # dsh-plugins —— 本机 DSH 本地插件工程
 
+[![ci](https://github.com/datoucai0/dsh-plugins/actions/workflows/ci.yml/badge.svg)](https://github.com/datoucai0/dsh-plugins/actions/workflows/ci.yml)
+
 本目录是**本机所有自用/本地 DSH 插件的开发工程**（一个 git 仓库）。以后新功能、新插件都在这里开发。
 
 ## 目录结构（标准布局）
